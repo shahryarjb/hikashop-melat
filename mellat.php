@@ -7,6 +7,8 @@
  * @copyright   Copyright (C) 20016 Open Source Matters, Inc. All rights reserved.
  * @license     GNU General Public License version 2 or later; see LICENSE.txt
  */
+defined('_JEXEC') or die('Restricted access');
+
 if (!class_exists ('checkHack')){
 	require_once JPATH_SITE . '/plugins/hikashoppayment/mellat/trangell_inputcheck.php';
 }
@@ -114,6 +116,7 @@ class plgHikashoppaymentMellat extends hikashopPaymentPlugin {
 			// $mobile = $this->getInfo($Order->order_user_id);
 			$return_url = HIKASHOP_LIVE.'index.php?option=com_hikashop&ctrl=checkout&task=after_end&order_id='.$orderId.$this->url_itemid;
 			$cancel_url = HIKASHOP_LIVE.'index.php?option=com_hikashop&ctrl=order&task=cancel_order&order_id='.$orderId.$this->url_itemid;
+			$history = new stdClass();
 			//------------------------------------------------------
 
 			$ResCode = $jinput->post->get('ResCode', '1', 'INT'); 
@@ -158,7 +161,9 @@ class plgHikashoppaymentMellat extends hikashopPaymentPlugin {
 								$response = $soap->bpSettleRequest($fields);
 								if ($response->return == '0' || $response->return == '45') {
 									$msg= $this->getGateMsg($response->return); 
-									$this->modifyOrder($orderId, 'confirmed', true, true); 
+									$history->notified = 1;
+									$history->data =  $SaleReferenceId;
+									$this->modifyOrder($orderId, 'confirmed', $history, true); 
 									$app->redirect($return_url, '<h2>'.$msg.'</h2>'.'<h3>'. $SaleReferenceId .'شماره پیگری ' .'</h3>' , $msgType='Message'); 
 								}
 								else {
