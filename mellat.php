@@ -162,7 +162,7 @@ class plgHikashoppaymentMellat extends hikashopPaymentPlugin {
 								if ($response->return == '0' || $response->return == '45') {
 									$msg= $this->getGateMsg($response->return); 
 									$history->notified = 1;
-									$history->data =  $SaleReferenceId;
+									$history->data =  'شماره پیگیری '.$SaleReferenceId;
 									$this->modifyOrder($orderId, 'confirmed', $history, true); 
 									$app->redirect($return_url, '<h2>'.$msg.'</h2>'.'<h3>'. $SaleReferenceId .'شماره پیگری ' .'</h3>' , $msgType='Message'); 
 								}
